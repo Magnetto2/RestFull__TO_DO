@@ -3,6 +3,8 @@ package com.example.to_do__demo.controllers;
 import com.example.to_do__demo.Entity.CategoryEntity;
 import com.example.to_do__demo.Entity.PriorityEntity;
 import com.example.to_do__demo.repo.PriorityRepository;
+import com.example.to_do__demo.search.CategorySearchValues;
+import com.example.to_do__demo.search.PrioritySearchValues;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +24,11 @@ public class PriorityController {
         this.priorityRepository = priorityRepository;
     }
 
-    @GetMapping("/test")
-    public List<PriorityEntity> test(){
+    @GetMapping("/all")
+    public List<PriorityEntity> findAll(){
 
-        List<PriorityEntity> list = priorityRepository.findAll();
-        System.out.println("list = " + list);
+         return  priorityRepository.findAllByOrderByIdAsc();
 
-        return list;
     }
 
     @PostMapping("/add")
@@ -107,6 +107,11 @@ public class PriorityController {
 
         return new ResponseEntity(HttpStatus.OK);
 
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<PriorityEntity>> search(@RequestBody PrioritySearchValues prioritySearchValues){
+        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getText()));
     }
 
 }

@@ -4,6 +4,7 @@ package com.example.to_do__demo.controllers;
 import com.example.to_do__demo.Entity.CategoryEntity;
 import com.example.to_do__demo.Entity.PriorityEntity;
 import com.example.to_do__demo.repo.CategoryRepository;
+import com.example.to_do__demo.search.CategorySearchValues;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,10 @@ public class CategoryController {
         this.categoryRepository = categoryRepository;
     }
 
-    @GetMapping("/test")
-    public List<CategoryEntity> test(){
-         List<CategoryEntity> list = categoryRepository.findAll();
+    @GetMapping("/all")
+    public List<CategoryEntity> findAll(){
+         return categoryRepository.findAllByOrderByTitleAsc();
 
-         return list;
     }
 
     @PostMapping("/add")
@@ -83,4 +83,12 @@ public class CategoryController {
         return new ResponseEntity(HttpStatus.OK);
 
     }
+
+    //Поиск по любым параметрам категории
+    @PostMapping("/search")
+    public ResponseEntity<List<CategoryEntity>> search(@RequestBody CategorySearchValues categorySearchValues){
+        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+    }
+
+
 }
