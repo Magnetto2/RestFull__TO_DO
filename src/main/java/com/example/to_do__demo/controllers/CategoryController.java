@@ -3,6 +3,7 @@ package com.example.to_do__demo.controllers;
 
 import com.example.to_do__demo.Entity.CategoryEntity;
 import com.example.to_do__demo.Entity.PriorityEntity;
+
 import com.example.to_do__demo.repo.CategoryRepository;
 import com.example.to_do__demo.search.CategorySearchValues;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -72,7 +73,6 @@ public class CategoryController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable Long id){
 
-        PriorityEntity priority = null;
 
         try{
             categoryRepository.deleteById(id);
@@ -88,6 +88,21 @@ public class CategoryController {
     @PostMapping("/search")
     public ResponseEntity<List<CategoryEntity>> search(@RequestBody CategorySearchValues categorySearchValues){
         return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+    }
+
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<CategoryEntity> findById(@PathVariable Long id) {
+        CategoryEntity category = null;
+
+        try{
+            category = categoryRepository.findById(id).get();
+        }catch (NoSuchElementException e){ // если объект не будет найден
+            e.printStackTrace();
+            return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        return  ResponseEntity.ok(category);
     }
 
 

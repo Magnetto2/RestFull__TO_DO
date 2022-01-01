@@ -45,7 +45,7 @@ public class PriorityController {
         }
 
 
-        if(priorityEntity.getColor() != null && priorityEntity.getColor().trim().length()!=0){
+        if(priorityEntity.getColor() == null && priorityEntity.getColor().trim().length()==0){
             return new ResponseEntity("Missed param : color", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -97,7 +97,7 @@ public class PriorityController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable Long id){
 
-        PriorityEntity priority = null;
+
 
         try{
             priorityRepository.deleteById(id);

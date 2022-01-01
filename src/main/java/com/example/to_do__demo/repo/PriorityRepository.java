@@ -18,5 +18,8 @@ public interface PriorityRepository extends JpaRepository<PriorityEntity,Long> {
         List<PriorityEntity> findByTitle(@Param("title")String title);
 
 
+
+
+
         List<PriorityEntity> findAllByOrderByIdAsc();
 }

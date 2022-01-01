@@ -15,10 +15,11 @@ import java.util.Date;
 @Table(name = "task", schema = "to_do")
 public class TaskEntity {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Basic
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(name = "title", length = 100)
     private String title;
     @Basic
     @Column(name = "completed")
