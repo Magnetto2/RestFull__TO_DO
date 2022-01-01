@@ -2,8 +2,8 @@ package com.example.to_do__demo.controllers;
 
 
 import com.example.to_do__demo.Entity.TaskEntity;
-import com.example.to_do__demo.repo.TaskRepository;
 import com.example.to_do__demo.search.TaskSearchValues;
+import com.example.to_do__demo.service.TaskService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,22 +19,19 @@ import java.util.NoSuchElementException;
 @RequestMapping("/task") // базовый адрес
 public class TaskController {
 
-    private final TaskRepository taskRepository; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
+    private final TaskService taskService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
 
-    // автоматическое внедрение экземпляра класса через конструктор
-    // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
-
 
     // получение всех данных
     @GetMapping("/all")
     public ResponseEntity<List<TaskEntity>> findAll() {
 
 
-        return ResponseEntity.ok(taskRepository.findAll());
+        return ResponseEntity.ok(taskService.findAll());
     }
 
 
@@ -52,7 +49,7 @@ public class TaskController {
         }
 
 
-        return ResponseEntity.ok(taskRepository.save(taskEntity));
+        return ResponseEntity.ok(taskService.add(taskEntity));
     }
 
 
@@ -73,7 +70,7 @@ public class TaskController {
 
 
         // save работает как на добавление, так и на обновление
-        taskRepository.save(task);
+        taskService.update(task);
 
         return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
@@ -86,7 +83,7 @@ public class TaskController {
     public ResponseEntity delete(@PathVariable Long id) {
 
         try {
-            taskRepository.deleteById(id);
+            taskService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -101,7 +98,7 @@ public class TaskController {
         TaskEntity task = null;
 
         try {
-            task = taskRepository.findById(id).get();
+            task = taskService.findById(id);
         } catch (NoSuchElementException e) { // если объект не будет найден
             e.printStackTrace();
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -142,7 +139,7 @@ public class TaskController {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
         // результат запроса с постраничным выводом
-        Page result = taskRepository.findByParams(text, completed, priorityId, categoryId, pageRequest);
+        Page result = taskService.findByParams(text, completed, priorityId, categoryId, pageRequest);
 
         // результат запроса
         return ResponseEntity.ok(result);

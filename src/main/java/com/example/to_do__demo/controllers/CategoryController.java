@@ -4,8 +4,9 @@ package com.example.to_do__demo.controllers;
 import com.example.to_do__demo.Entity.CategoryEntity;
 import com.example.to_do__demo.Entity.PriorityEntity;
 
-import com.example.to_do__demo.repo.CategoryRepository;
+
 import com.example.to_do__demo.search.CategorySearchValues;
+import com.example.to_do__demo.service.CategoryService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,15 @@ import java.util.Optional;
 @RequestMapping("/category")
 public class CategoryController {
 
-    CategoryRepository categoryRepository;
+    CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/all")
     public List<CategoryEntity> findAll(){
-         return categoryRepository.findAllByOrderByTitleAsc();
+         return categoryService.findAllByOrderByTitleAsc();
 
     }
 
@@ -44,7 +45,7 @@ public class CategoryController {
         }
 
 
-        CategoryEntity categoryEntity = categoryRepository.save(category);
+        CategoryEntity categoryEntity = categoryService.add(category);
         return ResponseEntity.ok(categoryEntity);
     }
 
@@ -63,7 +64,7 @@ public class CategoryController {
 
 
 
-        CategoryEntity categoryEntity = categoryRepository.save(category);
+        CategoryEntity categoryEntity = categoryService.update(category);
         return ResponseEntity.ok(categoryEntity);
 
 
@@ -75,7 +76,7 @@ public class CategoryController {
 
 
         try{
-            categoryRepository.deleteById(id);
+            categoryService.deleteById(id);
         }catch (EmptyResultDataAccessException e){
             e.printStackTrace();
         }
@@ -87,7 +88,7 @@ public class CategoryController {
     //Поиск по любым параметрам категории
     @PostMapping("/search")
     public ResponseEntity<List<CategoryEntity>> search(@RequestBody CategorySearchValues categorySearchValues){
-        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+        return ResponseEntity.ok(categoryService.findByTitle(categorySearchValues.getText()));
     }
 
 
@@ -96,7 +97,7 @@ public class CategoryController {
         CategoryEntity category = null;
 
         try{
-            category = categoryRepository.findById(id).get();
+            category = categoryService.findById(id);
         }catch (NoSuchElementException e){ // если объект не будет найден
             e.printStackTrace();
             return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);

@@ -2,6 +2,7 @@ package com.example.to_do__demo.controllers;
 
 import com.example.to_do__demo.Entity.StatEntity;
 import com.example.to_do__demo.repo.StatRepository;
+import com.example.to_do__demo.service.StatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,11 +12,10 @@ import java.util.NoSuchElementException;
 
 public class StatController {
 
-    private StatRepository statRepository;
+    private StatService statService;
 
-
-    public StatController(StatRepository statRepository) {
-        this.statRepository = statRepository;
+    public StatController(StatService statService) {
+        this.statService = statService;
     }
 
     @GetMapping("{id}")
@@ -24,7 +24,7 @@ public class StatController {
         StatEntity statEntity = null;
 
         try{
-            statEntity = statRepository.findById(id).get();
+            statEntity = statService.findById(id);
         }catch (NoSuchElementException e){
             e.printStackTrace();
             return new ResponseEntity("id = " + id + "not found", HttpStatus.NOT_ACCEPTABLE);
